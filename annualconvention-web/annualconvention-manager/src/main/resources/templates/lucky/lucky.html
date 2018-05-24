@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="utf-8"/>
+	<title>纯米 | 抽奖</title>
+	<link rel="stylesheet" th:href="@{/css/lucky/style.css}"/>
+</head>
+<style>
+#previewLargeImg{
+ position:absolute;
+ z-index: 100;
+ background-color: rgba(0,0,0,.7);
+ width:100%;
+ height:100%;
+ display:none;
+ text-align: center;
+}
+#previewLargeImg img{
+position: absolute;
+top:50%;
+margin-top: -350px;
+left:50%;
+margin-left: -500px;
+}
+</style>
+<body>
+	<div class='luck-back'>
+		<div class="luck-content ce-pack-end">
+			<div id="luckuser" class="slotMachine">
+				<div class="slot" id="previewImg">
+					<span class="name">姓名</span>
+				</div>
+			</div>
+			<div class="luck-content-btn">
+				<button id="start" class="start" onclick="start()">开始</button>
+			</div>
+			<div class="luck-user">
+				<div class="luck-user-title">
+					<span  th:text="${prizeLevelName}">中奖名单</span>
+				</div>
+				<ul class="luck-user-list"></ul>
+				<div class="luck-user-btn">
+					<a href="#">中奖人</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 存放奖品大图 -->
+	<div id="previewLargeImg">
+		<img id="prizeLargePic" th:src="${prizePic}"/>
+	</div>
+	
+	<!-- jquery -->
+	 <script th:src="@{/js/jquery-3.2.1.min.js}"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		
+		var Lotterynumber = [[${Lotterynumber}]]; //设置本轮抽奖人数
+		var joinLuckyDrawUsers = [[${joinLuckyDrawUsers}]]; //参加抽奖的用户
+		var prizeLevelId = [[${prizeLevelId}]];  //奖项id
+		var prizePic = [[${prizePic}]];  //奖品图片
+		var prizeLevelName = [[${prizeLevelName}]].replace("中奖名单","");
+		console.log("本轮抽奖人数:"+Lotterynumber);
+		console.log("本轮奖项:"+prizeLevelName);
+		console.log("本轮奖品图片:"+prizePic);
+		
+		var xinm = new Array();  //头像
+		var userNames = new Array(); //姓名
+		var userIds = new Array(); //userId
+		var jobNums = new Array();  //工号
+		var getPrizeUserIds = new Array();  //中奖的userId
+		//初始化抽奖数据
+		for(var i = 0;i<joinLuckyDrawUsers.length;i++){
+			xinm.push(joinLuckyDrawUsers[i].headPic)
+			userNames.push(joinLuckyDrawUsers[i].userName);
+			userIds.push(joinLuckyDrawUsers[i].id);
+		    jobNums.push(joinLuckyDrawUsers[i].jobNum);
+		}
+	/*]]>*/
+	</script>
+	<script th:src="@{/js/lucky/Luckdraw.js}"></script>
+	<div style="text-align:center;">
+</div>
+</body>
+</html>

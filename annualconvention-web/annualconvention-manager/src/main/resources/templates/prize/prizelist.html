@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>纯米 | 奖品列表</title>
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+<link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+<link th:href="@{/js/layer-3.1.1/layer/theme/default/layer.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div id="wrapper">
+		<nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+		<div id="page-wrapper" class="gray-bg">
+        	<div class="border-bottom" th:include="header :: headerTop"></div>
+      		<div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+		   		<div class="col-lg-10">
+		     		<h2>奖品列表</h2>
+		      	</div>
+		      	<div class="col-lg-2">
+		      	</div>
+		  	</div>
+			<div class="col-sm-9" style="margin-top: 8px;margin-bottom: 8px;">
+				<button type="button" th:onclick="'javascript:addPrize();'" class="btn btn-primary">添加奖品</button>
+				<button style="margin-left: 10px;" type="button" th:onclick="'javascript:addPrizeLevel();'" class="btn btn-primary">添加奖品等级</button>
+			</div>
+        	<div class="wrapper wrapper-content animated fadeInRight">
+            	<div class="row">
+                	<div class="col-lg-12">
+	                    <div class="ibox float-e-margins">
+	                        <div class="ibox-title">
+	                            <h5>奖品列表</h5>
+	                            <div class="ibox-tools">
+	                                <a class="collapse-link">
+	                                    <i class="fa fa-chevron-up"></i>
+	                                </a>
+	                            </div>
+	                        </div>
+	                        <div class="ibox-content">
+	                            <div class="table-responsive">
+	                                <table class=" table table-hover" data-page-size="10">
+	                                    <thead>
+		                                    <tr>
+		                                    	<th>奖品图片</th>
+		                                    	<th>奖品名称</th>
+		                                        <th>奖品等级 </th>
+		                                        <!--  <th>奖品数量</th> -->
+		                                        <th>操作</th>
+		                                    </tr>
+	                                    </thead>
+	                                    <tbody>
+	                                    	<tr th:each="prize : ${prizeList}">
+										   		<td><img alt="" th:src="${prize.prizePic}" class="img-circle" height="30"/></td>
+												<td th:text="${prize.prizeName}">奖品名称</td>
+												<td th:text="${prize.prizeLevel.prizeLevelName}">奖品等级</td>
+												<!--  <td th:text="${prize.prizeNum}">奖品数量</td> -->
+										      	<td>
+										   			<a href="#" th:onclick="'javascript:delPrizeById('+${prize.id}+');'" th:text="删除"></a>
+										      	</td>
+											</tr>
+	                                    </tbody>
+	                                </table>
+			                	</div>
+	                        </div>
+	           			</div>
+                	</div>
+            	</div>
+        	</div>
+        	<div class="footer" th:include="footer :: copyright"></div>
+      	</div>
+      	
+		<!--Modal-->
+		<div class="modal fade" id="addPrizeDiv" tabindex="-1" role="dialog"
+			aria-labelledby="ModalTitle" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="ModalTitle">添加奖品</h4>
+					</div>
+					<form class="form-horizontal" method="post" id="addPrizeForm" th:action="@{addPrize}">
+						<div class="box-body">
+		              		<div class="form-group">
+		                		<label class="control-label col-sm-3">预览图：</label>
+		                		<div class="col-sm-1"></div>
+		                		<div class="col-sm-5">
+		                			<input name="prizePic" id="prizePic" type="hidden" value=""/>
+		                  			<img class="img-circle" alt="Prize Image" id="img" th:src="@{/img/defaultPrize.jpg}" height="30"/> 
+		                 			<input type="button" id="choose" value="选择"/> 
+		               				<input type="file" id="imgUpload" name="file" onchange="uploadPrizePic(this)"
+		               				style="display: none;" multiple="multiple" />
+		               			</div>	
+		              		</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">奖品名称：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="prizeName" name="prizeName" value="" placeholder="输入奖品名称"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">奖品等级：</label>
+									<div class="col-sm-5">
+										<select class="form-control cate_selector"  name="prizeLevelId" id="prizeLevelId">
+											   <option value="0">---请选择等级---</option>
+					                           <option th:each="prizeLevel : ${prizeLevelList}" th:value="${prizeLevel.id}" th:text="${prizeLevel.prizeLevelName}">Option</option>
+									    </select>
+									</div>
+							</div>
+							<!--	
+							<div class="form-group">
+								<label class="control-label col-sm-3">奖品数量：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="prizeNum" name="PrizeNum" value="" placeholder="输入奖品数量"
+										onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+										onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
+								</div>
+							</div>
+							-->
+						</div>
+					</form>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="subAddPrizeForm();">确定</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!--Modal-->
+		<div class="modal fade" id="addPrizeLevelDiv" tabindex="-1" role="dialog"
+			aria-labelledby="ModalTitle" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="ModalTitle">添加奖品等级</h4>
+					</div>
+					<form class="form-horizontal" method="post" id="addPrizeLevelForm" th:action="@{addPrizeLevel}">
+						<div class="box-body">
+							<div class="form-group">
+								<label class="control-label col-sm-3">奖品等级：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="prizeLevelName" name="prizeLevelName" value="" placeholder="输入奖品等级"/>
+								</div>
+							</div>
+						</div>
+					</form>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="subAddPrizeLevelForm();">确定</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+	
+    <!-- Custom and plugin javascript -->
+    <script th:src="@{/js/inspinia.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+	
+    <!-- iCheck -->
+    <script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/demo/peity-demo.js}"></script>
+	
+	<!-- FooTable -->
+    <script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+    
+    <!-- common -->
+    <script th:src="@{/js/common.js}"></script>
+    
+    <script th:src="@{/js/jquery.form.min.js}"></script>
+    
+    <!-- layerui -->
+	<script th:src="@{/js/layer-3.1.1/layer/layer.js}"></script> 
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	
+    	$(function(){
+			siderBar("prizelist");
+			
+			$("#choose").click(function() {
+				$("#imgUpload").click();
+			});
+		});
+		
+    	
+    	//添加奖品
+    	function addPrize(){
+    		$("#addPrizeDiv").modal('show');
+    	}
+    	
+    	//添加奖品等级
+    	function addPrizeLevel(){
+    		$("#addPrizeLevelDiv").modal('show');
+    	}
+    	
+    	//保存添加的奖品
+    	function subAddPrizeForm(){
+    		//保存前非空判断
+			var prizeName = $("#prizeName").val();
+			var prizeLevelId = $("#prizeLevelId option:selected").val();
+			//var prizeNum = $("#prizeNum").val();
+			if(prizeName ==null || prizeName==''){
+				layer.msg("奖品名称不能为空!",{time:1000});
+				return
+			}
+			if(prizeLevelId==0){
+				layer.msg("请选择奖品等级",{time:1000});
+				return;
+			}
+			/*
+			if(prizeNum ==null || prizeNum == ''){
+				layer.msg("奖品数量不能为空",{time:1000});
+				return;
+			}
+			*/
+			$.ajax({
+				type:"GET",
+				url : "addPrizeJudge?prizeLevelId="+prizeLevelId,
+				success:function(msg){
+					console.log("msg--->"+msg);
+					if(msg !=null && msg !=''){
+						console.log(msg);
+						layer.msg(msg,{time:1000});
+					}else{
+			    		$("#addPrizeForm").submit();
+			    		$("#addPrizeDiv").modal('hide');
+					}
+				}
+			});
+    	}
+    	
+    	
+    	//保存添加的奖品等级
+    	function subAddPrizeLevelForm(){
+    		//保存前非空判断
+			var prizeLevelName = $("#prizeLevelName").val();   
+			if(prizeLevelName ==null || prizeLevelName==''){
+				layer.msg("奖品等级不能为空!",{time:1000});
+				return;
+			}
+    		$("#addPrizeLevelForm").submit();
+    		$("#addPrizeLevelDiv").modal('hide');
+    		
+    	}
+    	
+    	//删除奖品
+    	function delPrizeById(id){
+    		layer.confirm('确认删除奖品?',{
+    			btn:['确认','取消']
+    		},function(){
+    			$.ajax({
+    	      		type: "POST",
+    	      		async: false,
+    	           	url: "delPrizeById?id="+id,
+    	           	contentType: "application/json; charset=utf-8",
+    	           	dataType: 'JSON',
+    	        	success: function(msg){
+    	        		if(msg.code== 10000){
+    	        			location.reload();
+    	        		}else{
+    	        			layer.msg(msg.message,{time:1000})
+    	        		}
+    	       		},
+    	     		error: function(){
+    	     			layer.msg("系统异常!",{time:1000});
+    	       		}				
+    			});
+    		},function(){
+    			
+    		});    		
+    	}
+    	
+    	
+    	//上传奖品图片
+    	function uploadPrizePic(obj){
+    		var ctxValue = $(obj).val();
+    		var extStart = ctxValue.lastIndexOf(".");
+    		var ext = ctxValue.substring(extStart, ctxValue.length).toUpperCase();
+    		if(ext==".GIF" || ext==".JPG" || ext==".JPEG" || ext==".PNG" || ext==".BMP" || ext==".ICO"){
+    			var options = {
+    					url : "uploadPrizePic",
+    					type : "POST",
+    					dataType : 'JSON',
+    					success : function(data) {
+    						layer.closeAll();
+    						if(data.code==10000){
+    							$("#prizePic").val(data.result);
+    							$("#img").attr('src',data.result);
+    							layer.msg("图片上传成功",{time:1000});
+    						}else{
+    							layer.msg(data.message,{time:1000});
+    						}
+    					},
+    					error:function(){
+    						layer.closeAll();
+    						layer.msg("系统异常",{time:1000});
+    					}
+    				};
+    				$("#addPrizeForm").ajaxSubmit(options);
+    				layer.load(0);
+    		}else{
+    			layer.msg("上传图片格式错误",{time:1000});
+    		}
+    	}
+		
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>

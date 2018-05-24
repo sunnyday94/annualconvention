@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>纯米 | 用户列表</title>
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+<link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+<link th:href="@{/js/layer-3.1.1/layer/theme/default/layer.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div id="wrapper">
+		<nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+		<div id="page-wrapper" class="gray-bg">
+        	<div class="border-bottom" th:include="header :: headerTop"></div>
+      		<div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+		   		<div class="col-lg-10">
+		     		<h2>用户管理</h2>
+		      	</div>
+		      	<div class="col-lg-2">
+		      	</div>
+		  	</div>
+		  	
+        	<div class="wrapper wrapper-content animated fadeInRight">
+	               <div class="row">
+	                   <div class="col-sm-12" >
+	                   		<form id="dataTable" th:action="@{userlist_0_0_0}" method="get">
+	                                   <label class="control-label">工号:</label>
+	                                   <input class="input-medium"  name="jobNum" type="text" th:value="${pb.objectBean.jobNum}" id="jobNum"
+	                                          style="height: 2.6rem; width: 20rem;margin-right: 3rem;"/>
+	                                   <label class="control-label">姓名:</label>
+	                                   <input class="input-medium"  name="userName" type="text" th:value="${pb.objectBean.userName}" id="userName"
+	                                          style="height: 2.6rem; width: 20rem;margin-right: 3rem;"/>
+	                                   <label class="control-label">奖项:</label>
+	                                   <select id="prizeLevelId" name="prizeLevelId" class="selector" style="height: 2.6rem; width: 20rem;margin-right: 3rem;">
+	                                   	   <option value="0">---请选择---</option>
+	                                       <option th:each="prizeLevel : ${prizeLevelList }" th:value="${prizeLevel.id}" th:text="${prizeLevel.prizeLevelName}"></option>
+	                                   </select>
+	                                   <button type="submit" class="btn btn-primary">查询</button>
+	                                   <div style="display: inline-block;margin-left: 15px;">
+	                                    	<button type="button" class="btn btn-primary" th:onclick="'javascript:addUserInfo();'">新增</button>
+	                                   </div>
+	                                   <div style="display: inline-block;margin-left: 15px;">
+	                                    	<button type="button" class="btn btn-primary" th:onclick="'javascript:exportUserInfo();'">导出</button>
+	                                   </div>
+        	 				</form>
+	                   </div>
+	               </div>
+            	<div class="row" style="margin-top:14px;">
+                	<div class="col-sm-12">
+	                    <div class="ibox float-e-margins">
+	                        <div class="ibox-title">
+	                            <h5>用户列表</h5>
+	                            <div class="ibox-tools">
+	                                <a class="collapse-link">
+	                                    <i class="fa fa-chevron-up"></i>
+	                                </a>
+	                            </div>
+	                        </div>
+	                        <div class="ibox-content">
+	                            <div class="table-responsive">
+	                                <table class=" table table-hover" data-page-size="10">
+	                                    <thead>
+		                                    <tr>
+		                                    	<th>序号</th>
+		                                    	<th>头像</th>
+		                                        <th>工号</th>
+		                                        <th>奖项</th>
+		                                        <th>姓名</th>
+		                                        <th>奖品</th>
+		                                        <th>操作</th>
+		                                    </tr>
+	                                    </thead>
+	                                    <tbody>
+	                                    	<tr th:each="user : ${pb.list}">
+										   		<td th:text="${user.id}">序号</td>
+										   		<td><img alt="" th:src="${user.headPic}" class="img-circle" height="30"/></td>
+												<td th:text="${user.jobNum}">工号</td>
+												<td th:text="${user.prizeLevelName}">奖项</td>
+												<td th:text="${user.userName}">姓名</td>
+												<td th:text="${user.prizeName}">奖品</td>
+										      	<td><a href="#" th:text="修改信息" 
+										      	th:onclick="'javascript:updateUserInfo('+${user.id}+',\''+${user.telNum}+'\',\''+${user.address}+'\');'">修改信息</a></td>
+											</tr>
+	                                    </tbody>
+	                                   	<tfoot>
+			                                <tr>
+			                                    <td colspan="7">
+			                                        <ul id="pageHTML" class="pagination pull-right"></ul>
+			                                    </td>
+			                                </tr>
+		                                </tfoot>
+	                                </table>
+			                	</div>
+	                        </div>
+	           			</div>
+                	</div>
+            	</div>
+        	</div>
+        	<div class="footer" th:include="footer :: copyright"></div>
+      	</div>
+      	
+	    <form id="exportForm" th:action="@{exportUserInfo}" method="post">
+	         <input type="hidden" id="exportUserName" name="userName"/>
+	         <input type="hidden" id="exportJobNum" name="jobNum"/>
+	         <input type="hidden" id="exportPrizeLevelId" name="prizeLevelId"/>
+	         <input type="hidden" id="exportPrizeLevelName" name="prizeLevelName"/>               
+      	</form>
+      	
+		<!-- Update Modal-->
+		<div class="modal fade" id="updateUserInfoDiv" tabindex="-1" role="dialog"
+			aria-labelledby="ModalTitle" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="ModalTitle">更新用户信息</h4>
+					</div>
+					<form class="form-horizontal" method="post" id="updateUserInfoForm" th:action="@{updateUserInfo}">
+						<div class="box-body">
+							<div class="form-group">
+								<label class="control-label col-sm-3">手机号码：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="telNum" name="telNum" value="" placeholder="输入手机号码"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">邮寄地址: </label>
+								<div class="col-sm-5">
+									<textarea rows="5" cols="4" class="form-control" id="address" name="address" placeholder="输入邮寄地址"></textarea>
+								</div>
+							</div>
+						</div>
+						<input id="userId" name="id" value="" type="hidden"/>
+					</form>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="saveUpdateUserInfo();">确定</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Add Modal-->
+		<div class="modal fade" id="addUserInfoDiv" tabindex="-1" role="dialog"
+			aria-labelledby="ModalTitle" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="ModalTitle">新增用户信息</h4>
+					</div>
+					<form class="form-horizontal" method="post" id="addUserInfoForm" th:action="@{addUserInfo}">
+						<div class="box-body">
+		              		<div class="form-group">
+		                		<label class="control-label col-sm-3">预览图：</label>
+		                		<div class="col-sm-1"></div>
+		                		<div class="col-sm-5">
+		                			<input name="headPic" id="headPic" type="hidden" value=""/>
+		                  			<img class="img-circle" alt="User Image" id="img" th:src="@{/img/defaultPrize.jpg}" height="30"/> 
+		                 			<input type="button" id="choose" value="上传美照"/> 
+		               				<input type="file" id="imgUpload" name="file" onchange="uploadHeadPic(this)"
+		               				style="display: none;" multiple="multiple" />
+		               			</div>	
+		              		</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">姓名：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="addUserName" name="userName" value="" placeholder="输入姓名"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">工号：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="addJobNum" name="jobNum" value="" placeholder="输入工号"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">手机号码：</label>
+								<div class="col-sm-5">
+									<input type="text" class="form-control" id="addTelNum" name="telNum" value="" placeholder="输入手机号码"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">邮寄地址: </label>
+								<div class="col-sm-5">
+									<textarea rows="5" cols="4" class="form-control" id="addAddress" name="address" placeholder="输入邮寄地址"></textarea>
+								</div>
+							</div>
+						</div>
+					</form>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" onclick="saveAddUserInfo();">确定</button>
+						<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+	
+    <!-- Custom and plugin javascript -->
+    <script th:src="@{/js/inspinia.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+	
+    <!-- iCheck -->
+    <script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/demo/peity-demo.js}"></script>
+	
+	<!-- FooTable -->
+    <script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+    
+    <!-- common -->
+    <script th:src="@{/js/common.js}"></script>
+    
+
+    <!-- layerui -->
+	<script th:src="@{/js/layer-3.1.1/layer/layer.js}"></script> 
+	
+	<script th:src="@{js/jquery-form.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+	    var pageHTML = [[${pageHTML}]];
+		$(document).ready(function () {
+			siderBar("userlist");
+			$("#pageHTML").html(pageHTML);
+			
+			var prizeLevelId = [[${pb.objectBean.prizeLevelId}]];
+			console.log("prizeLevelId--->"+prizeLevelId);
+			if(prizeLevelId !=null && prizeLevelId !=''){
+				$("#prizeLevelId").val(prizeLevelId);
+			}
+			
+			$("#choose").click(function() {
+				$("#imgUpload").click();
+			});
+		});
+		
+		
+		//修改用户信息(弹窗)
+		function updateUserInfo(id,telNum,address){
+			console.log("id--->"+id);
+			console.log("telNum-->"+telNum);
+			console.log("address--->"+address);
+			$("#userId").val(id);
+			$("#telNum").val(telNum);
+			$("#address").val(address);
+			$("#updateUserInfoDiv").modal('show');
+		}
+		
+		//新增用户信息(弹窗)
+		function addUserInfo(){
+			$("#addUserInfoDiv").modal('show');
+		}
+		
+		
+		//保存修改的用户信息
+		function saveUpdateUserInfo(id,telNum,address){
+			var telNum = $("#telNum").val();
+			var address = $("#address").val();
+			if(telNum ==null || telNum == ''){
+				layer.msg("手机号码不能为空",{time:1000});
+				return;
+			}
+			if(address==null || address== ''){
+				layer.msg("邮寄地址不能为空");
+				return;
+			}
+			$("#updateUserInfoForm").ajaxSubmit(function(){
+				$("#updateUserInfoDiv").modal('hide');
+				layer.msg("修改成功",{time:1000});
+				setTimeout(function(){location.reload();},1000);
+			});
+		}
+		
+		
+		//导出用户信息
+		function exportUserInfo(){
+			$("#exportUserName").val($("#userName").val());
+			$("#exportJobNum").val($("#jobNum").val());
+			$("#exportPrizeLevelId").val($("#prizeLevelId option:selected").val());
+			$("#exportPrizeLevelName").val($("#prizeLevelId option:selected").text());
+			$("#exportForm").submit();
+		}
+		
+		//上传头像
+		function uploadHeadPic(obj){
+    		var ctxValue = $(obj).val();
+    		var extStart = ctxValue.lastIndexOf(".");
+    		var ext = ctxValue.substring(extStart, ctxValue.length).toUpperCase();
+    		if(ext==".GIF" || ext==".JPG" || ext==".JPEG" || ext==".PNG" || ext==".BMP" || ext==".ICO"){
+    			var options = {
+    					url : "uploadPrizePic",
+    					type : "POST",
+    					dataType : 'JSON',
+    					success : function(data) {
+    						layer.closeAll();
+    						if(data.code==10000){
+    							$("#headPic").val(data.result);
+    							$("#img").attr('src',data.result);
+    							layer.msg("图片上传成功",{time:1000});
+    						}else{
+    							layer.msg(data.message,{time:1000});
+    						}
+    					},
+    					error:function(){
+    						layer.closeAll();
+    						layer.msg("系统异常",{time:1000});
+    					}
+    				};
+    			$("#addUserInfoForm").ajaxSubmit(options);
+    			layer.load(0);
+    		}else{
+    			layer.msg("上传图片格式错误",{time:1000});
+    		}			
+		}
+		
+		//保存用户信息
+		function saveAddUserInfo(){
+			var headPic = $("#headPic").val();
+			var userName = $("#addUserName").val();
+			var jobNum = $("#addJobNum").val();
+			var telNum = $("#addTelNum").val();
+			var address = $("#addAddress").val();
+			if(headPic == null || headPic == ''){
+				layer.msg("头像不能为空",{time:1000});
+				return;
+			}
+			if(userName == null || userName == ''){
+				layer.msg("姓名不能为空",{time:1000});
+				return;
+			}
+			if(jobNum == null || jobNum == ''){
+				layer.msg("工号不能为空",{time:1000});
+				return;
+			}
+			if(telNum == null || telNum ==''){
+				layer.msg("联系电话不能为空",{time:1000});
+				return;
+			}
+			if(address ==null || address == ''){
+				layer.msg("邮寄地址不能为空",{time:1000});
+				return;
+			}
+			$.ajax({
+				type : 'POST',
+				url : "addUserInfo",
+				type : "POST",
+				data : $("#addUserInfoForm").serialize(),
+				dataType : 'JSON',
+				success : function(data) {
+					if(data.code==10000){
+						$("#addUserInfoDiv").modal('hide');
+						layer.msg("新增成功",{time:1000});
+						setTimeout(function(){location.reload();},1000);
+					}else{
+						layer.msg(data.message,{time:1000});
+					}
+				},
+				error:function(){
+					layer.closeAll();
+					layer.msg("系统异常",{time:1000});
+				}				
+			});
+		}
+		
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>

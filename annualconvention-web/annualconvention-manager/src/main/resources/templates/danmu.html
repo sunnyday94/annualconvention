@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+<title>弹幕</title>
+<style type="text/css">
+body {
+	background: url(); no-repeat top center;
+	background-size: cover;
+	background-attachment: fixed;
+	font-size: 12px;
+	font-family: "微软雅黑";
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.d_show {
+	position: relative;
+	z-index: 2;
+}
+
+.d_show div {
+	font-size: 40px;
+	line-height: 36px;
+	font-weight: 500;
+	position: absolute;
+	top: 76px;
+	left: 10;
+    color: #fff;
+    text-shadow: 4px 4px 10px #000;
+}
+
+html:-moz-full-screen {
+	no-repeat;
+}
+
+html:-webkit-full-screen {
+	no-repeat;
+}
+
+html:fullscreen {
+	no-repeat;
+}
+
+ 
+</style>
+ 
+</head>
+<body>
+	 <a href="#" th:onclick="'javascript:goBack();'"><strong>返回</strong></a>
+	 <a href="#" th:onclick="'javascript:kaishi();'"><strong>全屏模式</strong></a>
+	 <a href="#" th:onclick="'javascript:exit();'"><strong>退出全屏</strong></a>
+ 
+	 <img alt="" th:src="${picture.picUrl}"  id ="picUrl" style="display:none;"/>
+	 <div class="dm">
+	 <div class="d_screen">
+			<div class="d_show"></div>
+		</div>
+	 </div>
+	 <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script> 
+	 <!-- Custom and plugin javascript -->
+    <script th:src="@{/js/inspinia.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+	<!-- end dm-->
+	<script th:src="@{/js/reconnecting-websocket.min.js}"></script>
+	<script th:src="@{/js/common.js}"></script>
+	<script th:src="@{/js/websocket.js}"></script>
+	<script type="text/javascript">
+	  /*<![CDATA[*/
+		 var windowHe = $(window).height();
+		$(function() {
+			siderBar("danmu");
+			var picUrl =  $("#picUrl")[0].src;
+		    document.body.style.backgroundImage="URL("+picUrl+")";  
+		    document.body.style.backgroundPosition="center";  
+		    document.body.style.backgroundRepeat="no-repeat";  
+		    document.body.style.backgroundAttachment="fixed";  
+		    document.body.style.height =window.innerHeight+'px';
+			 
+		});
+	  
+		function launch() {
+
+			var _height = $(window).height();
+			var _left = $(window).width() - $("#" + index).width();
+			var _le = _left;
+			 if(_left < 1000){
+					_left = 1500;
+				 } 
+			var time = 10000;
+			if (index % 2 == 0)
+				time = 20000;
+			_top += 80;
+			if (_top > _height - 100)
+				_top = 80;
+			$("#" + index).css({
+				left : _le,
+				top : _top
+				/* color : getRandomColor() */
+
+			});
+			$("#" + index).animate({
+				left : "-" + _left + "px"
+			}, time, function() {
+			});
+			index++;
+		}
+ 
+		//随机获取颜色值
+		function getRandomColor() {
+			return '#' + (function(h) {
+				return new Array(7 - h.length).join("0") + h
+			})((Math.random() * 0x1000000 << 0).toString(16))
+		}
+		
+		 //返回
+		  function goBack(){
+			  history.back();
+		  }
+		 
+		 
+		function kaishi() {
+
+			var docElm = document.documentElement;
+			//W3C   
+			if (docElm.requestFullscreen) {
+				docElm.requestFullscreen();
+			}
+			//FireFox   
+			else if (docElm.mozRequestFullScreen) {
+				docElm.mozRequestFullScreen();
+			}
+			//Chrome等   
+			else if (docElm.webkitRequestFullScreen) {
+				docElm.webkitRequestFullScreen();
+			}
+			//IE11   
+			else if (elem.msRequestFullscreen) {
+				elem.msRequestFullscreen();
+			}
+			
+			var Qheight = window.screen.height;
+			$('body').height(Qheight);
+		}
+		function exit() {  
+	        if (document.exitFullscreen) {  
+	            document.exitFullscreen();  
+	        }  
+	        else if (document.mozCancelFullScreen) {  
+	            document.mozCancelFullScreen();  
+	        }  
+	        else if (document.webkitCancelFullScreen) {  
+	            document.webkitCancelFullScreen();  
+	        }  
+	        else if (document.msExitFullscreen) {  
+	            document.msExitFullscreen();  
+	        }  
+	        $('body').height(windowHe);
+		  }  
+
+		/*]]>*/
+	</script>
+
+</body>
+</html>

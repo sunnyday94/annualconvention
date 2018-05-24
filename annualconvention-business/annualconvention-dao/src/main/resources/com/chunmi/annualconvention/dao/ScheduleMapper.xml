@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chunmi.annualconvention.dao.ScheduleMapper">
+  <resultMap id="BaseResultMap" type="com.chunmi.annualconvention.po.Schedule">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="schedule_url" jdbcType="VARCHAR" property="scheduleUrl" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cm_schedule
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.chunmi.annualconvention.po.Schedule">
+    insert into cm_schedule (id, schedule_url, create_time, 
+      update_time, del_flag
+      )
+    values (#{id,jdbcType=BIGINT}, #{scheduleUrl,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{delFlag,jdbcType=CHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.chunmi.annualconvention.po.Schedule">
+    update cm_schedule
+    set schedule_url = #{scheduleUrl,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      del_flag = #{delFlag,jdbcType=CHAR}
+      where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, schedule_url, create_time, update_time, del_flag 
+    from cm_schedule
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, schedule_url, create_time, update_time, del_flag 
+    from cm_schedule where del_flag= '0'
+  </select>
+  
+  <select id="selectFirstSchedule" resultMap="BaseResultMap">
+     select id, schedule_url, create_time, update_time, del_flag 
+    from cm_schedule where del_flag= '0' order by create_time DESC LIMIT 1
+  </select>
+</mapper>

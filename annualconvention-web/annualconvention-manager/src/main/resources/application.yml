@@ -1,0 +1,30 @@
+# 配置数据源
+spring:
+  profiles:
+    active: pro
+      
+#thymeleaf 模板设置
+  thymeleaf:
+    cache: false
+    mode: HTML5
+    encoding: utf-8
+    content-type: text/html
+# 文件上传设置
+  http:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+# 设置上下文了路径
+server:
+  context-path: /
+  port: 8080
+
+# mybatis配置
+mybatis:
+  mapper-locations: classpath:com/chunmi/annualconvention/dao/*.xml
+  type-aliases-package: com.chunmi.annualconvention.*
+  config-location: classpath:/mybatis-config.xml
+  
+  
+  

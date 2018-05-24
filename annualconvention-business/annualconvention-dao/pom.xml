@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>annualconvention</groupId>
+    <artifactId>annualconvention-business</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>annualconvention-dao</artifactId>
+  
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<mybatis.version>3.4.5</mybatis.version>
+		<mybatis.spring.version>1.3.1</mybatis.spring.version>
+		<java.version>1.8</java.version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+		    <groupId>annualconvention</groupId>
+		    <artifactId>annualconvention-model</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		    <groupId>annualconvention</groupId>
+		    <artifactId>annualconvention-utils</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+  
+	<build>
+		<finalName>annualconvention-dao</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

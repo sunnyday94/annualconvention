@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chunmi.annualconvention.dao.PictureConfigMapper">
+  <resultMap id="BaseResultMap" type="com.chunmi.annualconvention.po.PictureConfig">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="type" jdbcType="CHAR" property="type" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="type_name" jdbcType="VARCHAR" property="typeName" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from cm_picture_config
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.chunmi.annualconvention.po.PictureConfig">
+    insert into cm_picture_config (id, pic_url, type, 
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{picUrl,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.chunmi.annualconvention.po.PictureConfig">
+    update cm_picture_config
+    set pic_url = #{picUrl,jdbcType=VARCHAR},
+      type = #{type,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, pic_url, type, create_time
+    from cm_picture_config
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+	select id, pic_url, type, create_time, case type
+	WHEN '0' THEN '注册页图片'
+	WHEN '1' THEN '年会表演节目表'
+	WHEN '2' THEN '弹幕背景图'
+	end as type_name
+	from cm_picture_config
+</select>
+  
+  <select id="selectByType" resultMap="BaseResultMap" parameterType="java.lang.String">
+  	select id, pic_url, type, create_time from cm_picture_config where type = #{type} order by create_time desc limit 1
+  </select>
+  
+  <delete id="delByType" parameterType="java.lang.String">
+    delete from cm_picture_config where type = #{type}
+  </delete>
+  
+</mapper>

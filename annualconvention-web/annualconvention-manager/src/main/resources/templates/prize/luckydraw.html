@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>纯米 | 幸运抽奖</title>
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+<link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+
+<link th:href="@{/js/layer-3.1.1/layer/theme/default/layer.css}" rel="stylesheet"/>
+
+<!-- 遮罩 -->
+<link th:href="@{/css/jquery.mloading.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div id="wrapper">
+		<nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+		<div id="page-wrapper" class="gray-bg">
+        	<div class="border-bottom" th:include="header :: headerTop"></div>
+      		<div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+		   		<div class="col-lg-10">
+		     		<h2>幸运抽奖</h2>
+		      	</div>
+		      	<div class="col-lg-3">
+		      	</div>
+		  	</div>
+		  	
+        	<div class="wrapper wrapper-content animated fadeInRight" id="luckyDrawContent">
+	               <div class="row">
+	                   <div class="col-sm-12" >
+	                   		<form id="dataTable" th:action="@{luckyDraw_0_0_0}" method="get">
+	                                   <label class="control-label">奖项:</label>
+	                                   <select id="prizeLevelId" name="prizeLevelId" class="selector" style="height: 2.6rem; width: 20rem;margin-right: 3rem;">
+	                                   	   <option value="0">---请选择---</option>
+	                                       <option th:each="prizeLevel : ${prizeLevelList }" th:value="${prizeLevel.id}" th:text="${prizeLevel.prizeLevelName}"></option>
+	                                   </select>
+	                                   <label class="control-label">设置人数:</label>
+	                                   <input class="input-medium"  name="getPrizeNum" type="text" th:value="${pb.objectBean.getPrizeNum}" id="getPrizeNum"
+	                                          style="height: 2.6rem; width: 20rem;margin-right: 3rem;"
+	                                          onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+	                                          onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+	                                          placeholder=""/>
+	                                   <button type="button" class="btn btn-primary" th:onclick="'javascript:startLuckDraw();'">开始抽奖</button>
+	                                   <button type="button" class="btn btn-primary" th:onclick="'javascript:clearAll();'">clear all</button>
+	                                   <input name="flag" type="hidden" value="1"/>
+        	 				</form>
+	                   </div>
+	               </div>
+            	<div class="row" style="margin-top:14px;">
+                	<div class="col-sm-12">
+	                    <div class="ibox float-e-margins">
+	                        <div class="ibox-title">
+	                            <h5>中奖者列表</h5>
+	                            <div class="ibox-tools">
+	                                <a class="collapse-link">
+	                                    <i class="fa fa-chevron-up"></i>
+	                                </a>
+	                            </div>
+	                        </div>
+	                        <div class="ibox-content">
+	                            <div class="table-responsive">
+	                                <table class=" table table-hover" data-page-size="10" id="getPrizeUserTable">
+	                                    <thead>
+		                                    <tr>
+		                                    	<th>头像</th>
+		                                        <th>工号</th>
+		                                        <th>姓名</th>
+		                                    </tr>
+	                                    </thead>
+	                                    <tbody>
+	                                    	<tr th:each="user : ${pb.list}">
+	                                    		<td><img alt="" th:src="${user.headPic}" class="img-circle" height="30"/></td>
+												<td th:text="${user.jobNum}">工号</td>
+												<td th:text="${user.userName}">姓名</td>
+											</tr>
+	                                    </tbody>
+	                                   	<tfoot>
+			                                <tr>
+			                                    <td colspan="4">
+			                                        <ul id="pageHTML" class="pagination pull-right"></ul>
+			                                    </td>
+			                                </tr>
+		                                </tfoot>
+	                                </table>
+			                	</div>
+	                        </div>
+	           			</div>
+                	</div>
+            	</div>
+        	</div>
+        	<div class="footer" th:include="footer :: copyright"></div>
+      	</div>
+      	
+	    <form id="exportForm" th:action="@{exportUserInfo}" method="post">
+	         <input type="hidden" id="exportUserName" name="userName"/>
+	         <input type="hidden" id="exportJobNum" name="jobNum"/>
+	         <input type="hidden" id="exportPrizeLevelId" name="prizeLevelId"/>
+	         <input type="hidden" id="exportPrizeLevelName" name="prizeLevelName"/>               
+      	</form>
+	</div>
+	
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+	
+    <!-- Custom and plugin javascript -->
+    <script th:src="@{/js/inspinia.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+	
+    <!-- iCheck -->
+    <script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/demo/peity-demo.js}"></script>
+	
+	<!-- FooTable -->
+    <script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+    
+    <!-- common -->
+    <script th:src="@{/js/common.js}"></script>
+    
+    <!-- layerui -->
+	<script th:src="@{/js/layer-3.1.1/layer/layer.js}"></script> 
+	
+	<script th:src="@{/js/jquery-form.js}"></script>
+	
+	<!-- 遮罩 -->
+	<script th:src="@{/js/jquery.mloading.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+	    var pageHTML = [[${pageHTML}]];
+    	var noPrizeUserCount = [[${noPrizeUserCount}]];
+    	var tip = "剩余未中奖人数为"+noPrizeUserCount;
+		$(document).ready(function () {
+			siderBar("luckydraw");
+			$("#pageHTML").html(pageHTML);
+			
+			var prizeLevelId = [[${pb.objectBean.prizeLevelId}]];
+			if(prizeLevelId !=null && prizeLevelId !=''){
+				$("#prizeLevelId").val(prizeLevelId);
+			}
+			console.log("tip--->"+tip);
+			$("#getPrizeNum").attr("placeholder",tip);
+		});
+		
+		// 开始抽奖
+		function startLuckDraw(){
+			var prizeLevelId = $("#prizeLevelId option:selected").val();
+			var getPrizeNum = $("#getPrizeNum").val();
+			if(prizeLevelId == 0){
+				layer.msg("请选择奖项",{time:1000});
+				return;
+			}
+			if(getPrizeNum == null || getPrizeNum == ''){
+				layer.msg("中奖人数不能为空!",{time:1000});
+				return;
+			}
+			$.ajax({
+				type:'GET',
+				url:'luckDrawJudge?prizeLevelId='+prizeLevelId+"&getPrizeNum="+getPrizeNum,
+				success:function(msg){
+					if(msg !=null && msg !=''){
+						layer.msg(msg,{time:1000});
+						return;
+					}else{
+						$("#getPrizeUserTable tbody").html("");
+						$("#getPrizeUserTable tfoot").html("");
+						$("#luckyDrawContent").mLoading("show");
+						setTimeout(function(){$("#dataTable").submit();},5000);
+					}
+				}
+			});
+			
+		}
+		
+		/*清空所有中奖纪录(测试时用)*/
+		function clearAll(){
+			$.ajax({
+				type:"POST",
+				url : "clearAll",
+				dataType:"JSON",
+				success: function(msg){
+					if(msg.code==10000){
+						//清空table数据
+						$("#getPrizeUserTable tbody").html("");
+						$("#getPrizeUserTable tfoot").html("");
+						
+						layer.msg("清空成功",{time:1000});
+						var tip = "剩余未中奖人数为"+msg.result;
+						console.log(tip);
+						$("#getPrizeNum").attr("placeholder",tip);
+					}
+				}
+			});
+		}
+		
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>纯米 | 抽奖设置</title>
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+<link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+
+<link th:href="@{/js/layer-3.1.1/layer/theme/default/layer.css}" rel="stylesheet"/>
+
+<!-- 遮罩 -->
+<link th:href="@{/css/jquery.mloading.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div id="wrapper">
+		<nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+		<div id="page-wrapper" class="gray-bg">
+        	<div class="border-bottom" th:include="header :: headerTop"></div>
+      		<div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+		   		<div class="col-lg-10">
+		     		<h2>幸运抽奖设置</h2><span style="color: red">(进入抽奖前请先刷新数据)</span>
+		      	</div>
+		      	<div class="col-lg-3">
+		      	</div>
+		  	</div>
+		  	
+        	<div class="wrapper wrapper-content animated fadeInRight" id="luckyDrawContent">
+	               <div class="row">
+	                   <div class="col-sm-12" >
+	                   		<form id="dataTable" th:action="@{goToLuckyDraw}" method="post">
+	                                   <label class="control-label">奖项:</label>
+	                                   <select id="prizeLevelId" name="prizeLevelId" class="selector" style="height: 2.6rem; width: 20rem;margin-right: 3rem;">
+	                                   	   <option value="0">---请选择---</option>
+	                                       <option th:each="prizeLevel : ${prizeLevelList }" th:value="${prizeLevel.id}" th:text="${prizeLevel.prizeLevelName}"></option>
+	                                   </select>
+	                                   <label class="control-label">抽奖人数:</label>
+	                                   <input class="input-medium"  name="getPrizeNum" type="text" value="" id="getPrizeNum"
+	                                          style="height: 2.6rem; width: 20rem;margin-right: 3rem;"
+	                                          onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" 
+	                                          onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"
+	                                          placeholder=""/>
+	                                   <input type="hidden" id="prizeLevelName" name="prizeLevelName" value=""/>
+	                                   <button type="button" class="btn btn-primary" th:onclick="'javascript:goToLuckyDraw();'">进入抽奖</button>
+	                                   <button type="button" class="btn btn-primary" th:onclick="'javascript:location.reload()'">刷新</button>
+	                                   <!--  <button type="button" class="btn btn-primary" th:onclick="'javascript:clearAll();'">clear all</button> -->
+        	 				</form>
+	                   </div>
+	               </div>
+        	</div>
+      	</div>
+	</div>
+	
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/plugins/peity/jquery.peity.min.js}"></script>
+	
+    <!-- Custom and plugin javascript -->
+    <script th:src="@{/js/inspinia.js}"></script>
+    <script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+	
+    <!-- iCheck -->
+    <script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+	
+    <!-- Peity -->
+    <script th:src="@{/js/demo/peity-demo.js}"></script>
+	
+	<!-- FooTable -->
+    <script th:src="@{/js/plugins/footable/footable.all.min.js}"></script>
+    
+    <!-- common -->
+    <script th:src="@{/js/common.js}"></script>
+    
+    <!-- layerui -->
+	<script th:src="@{/js/layer-3.1.1/layer/layer.js}"></script> 
+	
+	<script th:src="@{/js/jquery-form.js}"></script>
+	
+	<!-- 遮罩 -->
+	<script th:src="@{/js/jquery.mloading.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	var noPrizeUserCount = [[${noPrizeUserCount}]];
+    	var tip = "可参与抽奖人数为"+noPrizeUserCount;
+		$(document).ready(function () {
+			siderBar("luckydrawsetting");
+			console.log("tip--->"+tip);
+			$("#getPrizeNum").attr("placeholder",tip);
+		});
+		
+		//进入抽奖页面
+		function goToLuckyDraw(){
+			var prizeLevelId = $("#prizeLevelId option:selected").val();
+			var getPrizeNum = $("#getPrizeNum").val();
+			var prizeLevelName = $("#prizeLevelId option:selected").text();
+			$("input[name='prizeLevelName']").val(prizeLevelName);
+			if(prizeLevelId == 0){
+				layer.msg("请选择奖项",{time:1000});
+				return;
+			}
+			if(getPrizeNum ==null || getPrizeNum == ''){
+				layer.msg("抽奖人数不能为空",{time:1000});
+				return;
+			}
+			if(getPrizeNum>noPrizeUserCount){
+				layer.msg("抽奖人数不足"+getPrizeNum+"人",{time:1000});
+				return;
+			}
+			$("#dataTable").submit();
+		}
+		
+		/*清空所有中奖纪录(测试时用)*/
+		function clearAll(){
+			$.ajax({
+				type:"POST",
+				url : "clearAll",
+				dataType:"JSON",
+				success: function(msg){
+					if(msg.code==10000){
+						layer.msg("清空成功",{time:1000});
+						setTimeout(function(){location.reload();},1000);
+					}
+				}
+			});
+		}
+		/*]]>*/
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>纯米 | 上传节目表</title>
+
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+<link th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+<link th:href="@{/css/style.css}" rel="stylesheet" />
+
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+<link th:href="@{/css/plugins/footable/footable.core.css}" rel="stylesheet"/>
+<link th:href="@{/js/layer-3.1.1/layer/theme/default/layer.css}" rel="stylesheet"/>
+</head>
+<body>
+    <div id="wrapper">
+		<nav class="navbar-default navbar-static-side" role="navigation" th:include="nav :: navigation"></nav>
+		<div id="page-wrapper" class="gray-bg">
+        	<div class="border-bottom" th:include="header :: headerTop"></div>
+      		<div class="row wrapper border-bottom white-bg page-heading" th:fragment="headerNav">
+		   		<div class="col-lg-10">
+		     		<h2>上传节目表</h2>
+		      	</div>
+		      	<div class="col-lg-2">
+		      	</div>
+		  	</div>
+			<div class="form-group">
+				<div class="col-sm-5">
+					<input type="text" class="form-control s_text" id="message"
+						name="message" value=""  />
+					<button type="button" class="btn btn-primary" onclick="sendMessage();">发送</button>
+				</div>
+			</div>
+
+			<div class="footer" th:include="footer :: copyright"></div>
+      	</div>
+		
+	</div>
+	
+	
+    <!-- Mainly scripts -->
+    <script th:src="@{/js/jquery-2.1.1.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+    <script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+	
+   
+    <!-- common -->
+    <script th:src="@{/js/common.js}"></script>
+    
+    <script th:src="@{/js/jquery.form.min.js}"></script>
+    
+    <!-- layerui -->
+	<script th:src="@{/js/layer-3.1.1/layer/layer.js}"></script>  
+	<script th:src="@{/js/websocket.js}"></script>
+    
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    	
+    	$(function(){
+			siderBar("send");
+			
+			$("#btn").click(function() {
+				send();
+			});
+			$(".s_text").keydown(function() {
+				var code = window.event.keyCode;
+				if (code == 13)//回车键按下时，输出到弹幕
+				{
+					send();
+				}
+			});
+			
+		});
+		
+     
+    	 
+    	//保存添加的节目表图片
+    	function subAddScheduleForm(){
+    		//保存前非空判断
+			var pic = $("#pic").val();
+			 
+			if(pic ==null || pic==''){
+				layer.msg("图片不能为空!",{time:1000});
+				return
+			}
+    		$("#addSchedule").submit();
+    		 
+    	}
+    	
+    	
+    	 
+    	
+    	function uploadPic(obj){
+    		var ctxValue = $(obj).val();
+    		var extStart = ctxValue.lastIndexOf(".");
+    		var ext = ctxValue.substring(extStart, ctxValue.length).toUpperCase();
+    		if(ext==".GIF" || ext==".JPG" || ext==".JPEG" || ext==".PNG" || ext==".BMP" || ext==".ICO"){
+    			var options = {
+    					url : "uploadPrizePic",
+    					type : "POST",
+    					dataType : 'JSON',
+    					success : function(data) {
+    						layer.closeAll();
+    						if(data.code==10000){
+    							$("#pic").val(data.result);
+    							$("#imgpic").attr('src',data.result);
+    							layer.msg("图片上传成功",{time:1000});
+    						}else{
+    							layer.msg(data.message,{time:1000});
+    						}
+    					},
+    					error:function(){
+    						layer.closeAll();
+    						layer.msg("系统异常",{time:1000});
+    					}
+    				};
+    				$("#addSchedule").ajaxSubmit(options);
+    				layer.load(0);
+    		}else{
+    			layer.msg("上传图片格式错误",{time:1000});
+    		}
+    	}
+		
+	/*]]>*/
+	</script>
+
+</body>
+
+</html>
