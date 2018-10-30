@@ -18,7 +18,7 @@ spring:
 # 设置上下文了路径
 server:
   context-path: /annualconvention
-  port: 8082
+  port: 8081
 
 # mybatis配置
 mybatis:
