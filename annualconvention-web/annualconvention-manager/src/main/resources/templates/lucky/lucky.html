@@ -58,7 +58,7 @@ margin-left: -500px;
 		
 		var Lotterynumber = [[${Lotterynumber}]]; //设置本轮抽奖人数
 		var joinLuckyDrawUsers = [[${joinLuckyDrawUsers}]]; //参加抽奖的用户
-		// var prizeLevelId = [[${prizeLevelId}]];  //奖项id
+		var prizeLevelId = [[${prizeLevelId}]];  //奖项id
 		var prizePic = [[${prizePic}]];  //奖品图片
 		var prizeLevelName = [[${prizeLevelName}]].replace("中奖名单","");
 		console.log("本轮抽奖人数:"+Lotterynumber);
@@ -68,14 +68,14 @@ margin-left: -500px;
 		var xinm = new Array();  //头像
 		var userNames = new Array(); //姓名
 		var userIds = new Array(); //userId
-		// var jobNums = new Array();  //工号
-		// var getPrizeUserIds = new Array();  //中奖的userId
+		var jobNums = new Array();  //工号
+		var getPrizeUserIds = new Array();  //中奖的userId
 		//初始化抽奖数据
 		for(var i = 0;i<joinLuckyDrawUsers.length;i++){
 			xinm.push(joinLuckyDrawUsers[i].headPic)
 			userNames.push(joinLuckyDrawUsers[i].userName);
 			userIds.push(joinLuckyDrawUsers[i].id);
-		    // jobNums.push(joinLuckyDrawUsers[i].jobNum);
+		    jobNums.push(joinLuckyDrawUsers[i].jobNum);
 		}
 	/*]]>*/
 	</script>
