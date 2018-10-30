@@ -1,9 +1,7 @@
 package com.chunmi.annualconvention;
 
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.Banner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
@@ -24,22 +22,16 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 @MapperScan(basePackages= {"com.chunmi.annualconvention.dao"})
 @EnableTransactionManagement
 @EnableWebSocket
+@Slf4j
 public class Application extends SpringBootServletInitializer {
-	
-	private static Logger logger = LoggerFactory.getLogger(Application.class);
-	
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-		return configureApplication(builder);
-	}
 
-	public static void main(String[] args) {
-		logger.debug("app start .....");
+	public static void main(String[] args) throws Exception {
+		log.debug("application start .....");
 		configureApplication(new SpringApplicationBuilder()).run(args);
 	}
 
 	private static SpringApplicationBuilder configureApplication(SpringApplicationBuilder builder) {
-		return builder.sources(Application.class).bannerMode(Banner.Mode.OFF);
+		return builder.sources(Application.class);//.bannerMode(Mode.OFF);
 	}
 }

@@ -1,7 +1,7 @@
 # 配置数据源
 spring:
   profiles:
-    active: pro
+    active: dev
       
 #thymeleaf 模板设置
   thymeleaf:
@@ -17,8 +17,8 @@ spring:
 
 # 设置上下文了路径
 server:
-  context-path: /
-  port: 8080
+  context-path: /annualconvention
+  port: 8082
 
 # mybatis配置
 mybatis:

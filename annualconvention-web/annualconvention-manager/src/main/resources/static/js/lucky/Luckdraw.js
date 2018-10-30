@@ -80,7 +80,7 @@ function zd(callback) {
 					xinm.splice($.inArray(xinm[num], xinm), 1);   
 					userNames.splice($.inArray(userNames[num], userNames), 1);
 					userIds.splice($.inArray(userIds[num], userIds), 1);
-					jobNums.splice($.inArray(jobNums[num],jobNums), 1);
+					// jobNums.splice($.inArray(jobNums[num],jobNums), 1);
 					//重新获取参加抽奖人数
 					pcount = xinm.length;
 					//当抽奖结束会，执行回调函数
